@@ -1,5 +1,5 @@
 # GameAtla
-A game database browser app built with React, Material UI, and RAWG API.
+A game database browser app built with React, Material UI, and [RAWG API](https://rawg.io/apidocs).
 
 ## Features
 - Browse the top 20 rated games in the RAWG API
