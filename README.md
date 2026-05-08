@@ -4,9 +4,13 @@ A game database browser app built with React, Material UI, and [RAWG API](https:
 ## Features
 - Browse the top 20 rated games in the RAWG API
 - Search for games by title
+- Filter games by genre
 
 ## Upcoming Plans
-- Filter games by genre
+- Add game counts ('Showing 20 games' '20 results found for 'Spyro')
+- No results found message
+- Sort games by rating, release date, and name
+- Game detail popup (Click a card that will show the games description)
 
 ## To Run
 1. Clone the repository
