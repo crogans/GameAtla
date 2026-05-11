@@ -6,6 +6,7 @@ import CssBaseline from '@mui/material/CssBaseline'
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import Typography from '@mui/material/Typography'
+import Button from '@mui/material/Button'
 import Navbar from './components/Navbar'
 import LoadingCircle from './components/LoadingCircle'
 import GameCard from './components/GameCard'
@@ -30,17 +31,19 @@ function App() {
   const [selectedGame, setSelectedGame] = useState(null)
   const [popupOpen, setPopupOpen] = useState(false)
   const [ordering, setOrdering] = useState('-rating')
+  const [page, setPage] = useState(1)
 
-  // Fetch games from RAWG API on initial load and whenever the search query or selected genre changes
+  // Fetch games from RAWG API on initial load and whenever the search query or selected genre
   useEffect(() => {
     const fetchGames = async () => {
       setLoading(true)
-      const gameData = await getGames(searchQuery, selectedGenre, ordering)
-      setGames(gameData)
+      const gameData = await getGames(searchQuery, selectedGenre, ordering, page)
+      setGames(gameData.results)
       setLoading(false)
+      window.scrollTo(0, 0) // Scroll to top when new games are loaded (e.g. after searching, changing genre, or changing page)
     }
     fetchGames()
-  }, [searchQuery, selectedGenre, ordering])
+  }, [searchQuery, selectedGenre, ordering, page])
 
   // Fetch genres from RAWG API on initial load
   useEffect(() => {
@@ -51,8 +54,9 @@ function App() {
     fetchGenres()
   }, [])
 
-  // Handles the search input, triggers an API fetch with the current search input when the user clicks the Search button or presses Enter
+  // Handles the search input, triggers an API fetch with the current search input when the user clicks the Search button or presses Enter. Resets to the first page with new searches
   const handleSearch = () => {
+    setPage(1)
     setSearchQuery(searchInput)
   }
 
@@ -69,17 +73,20 @@ function App() {
       <Navbar />
       <SearchBar
         searchInput={searchInput}
-        onSearch={handleSearch} 
-        onSearchChange={setSearchInput} 
-        ordering={ordering} 
+        onSearch={handleSearch}
+        onSearchChange={setSearchInput}
+        ordering={ordering}
         onOrderingChange={setOrdering} />
-      {/* Genre filter chips, clicking on a chip will filter the games by that genre, clicking again will remove the filter */}
+      {/* Genre filter chips, clicking on a chip will filter the games by that genre, clicking again will remove the filter. When a genre is selected, it will reset to first page */}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, padding: 2 }}>
         {genres.map(genre => (
           <Chip
             key={genre.id}
             label={genre.name}
-            onClick={() => setSelectedGenre(selectedGenre === genre.slug ? '' : genre.slug)}
+            onClick={() => {
+              setPage(1)
+              setSelectedGenre(selectedGenre === genre.slug ? '' : genre.slug)
+            }}
             color={selectedGenre === genre.slug ? 'primary' : 'default'}
             clickable />
         ))}
@@ -100,6 +107,23 @@ function App() {
           ))}
         </Grid>
       )}
+      {/* Pagination buttons */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, padding: 2 }}>
+        <Button
+          variant="contained"
+          onClick={() => setPage(page => page - 1)}
+          disabled={page === 1}
+        >
+          Back
+        </Button>
+        <Typography sx={{ alignSelf: 'center' }}>Page {page}</Typography>
+        <Button
+          variant="contained"
+          onClick={() => setPage(page => page + 1)}
+        >
+          Next
+        </Button>
+      </Box>
       {/* Clicking on a game card will open the popup with more information about that game */}
       <GameInfoPopup
         game={selectedGame}

@@ -1,14 +1,14 @@
 const API_KEY = import.meta.env.VITE_API_KEY
 const BASE_URL = "https://api.rawg.io/api"
 
-// Get games from RAWG API, limited to 20 results with optional search term, genre filter, and ordering by rating
-const getGames = async (searchTerm = '', genre = '',  ordering = '-rating') => {
+// Get games from RAWG API, limited to 20 results with optional search term, genre filter, ordering, and pagination
+const getGames = async (searchTerm = '', genre = '',  ordering = '-rating', page = 1) => {
   const searchQuery = searchTerm ? `&search=${encodeURIComponent(searchTerm)}` : ''
   const genreQuery = genre ? `&genres=${genre}` : ''
   const orderingQuery = `&ordering=${ordering}`
-  const response = await fetch(`${BASE_URL}/games?key=${API_KEY}&page_size=20${searchQuery}${genreQuery}${orderingQuery}`)
+  const response = await fetch(`${BASE_URL}/games?key=${API_KEY}&page_size=20&page=${page}&metacritic=1,100${searchQuery}${genreQuery}${orderingQuery}`)
   const data = await response.json()
-  return data.results
+  return data
 }
 
 // Get genres from RAWG API
