@@ -4,9 +4,9 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
 // GameCard component to display individual game details
-export default function GameCard({ game }) {
+export default function GameCard({ game, onClick }) {
     return (
-        <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <Card onClick={onClick} sx={{ height: '100%', display: 'flex', flexDirection: 'column', cursor: 'pointer' }}>
             {/* Display the game image with a fixed height and overflow hidden, this ensures that the image fits properly without the card stretching */}
             <Box sx={{ minHeight: 200, maxHeight: 200, overflow: 'hidden' }}>
                 <img

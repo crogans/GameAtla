@@ -10,10 +10,18 @@ const getGames = async (searchTerm = '', genre = '') => {
   return data.results
 }
 
+// Get genres from RAWG API
 const getGenres = async () => {
   const response = await fetch(`${BASE_URL}/genres?key=${API_KEY}`)
   const data = await response.json()
   return data.results
 }
 
-export { getGames, getGenres }
+// Get information about a specific game by its ID from RAWG API
+const getGameDetails = async (id) => {
+  const response = await fetch(`${BASE_URL}/games/${id}?key=${API_KEY}`)
+  const data = await response.json()
+  return data
+}
+
+export { getGames, getGenres, getGameDetails }
