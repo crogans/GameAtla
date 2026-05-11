@@ -5,6 +5,7 @@ import Grid from '@mui/material/Grid'
 import CssBaseline from '@mui/material/CssBaseline'
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
+import Typography from '@mui/material/Typography'
 import Navbar from './components/Navbar'
 import LoadingCircle from './components/LoadingCircle'
 import GameCard from './components/GameCard'
@@ -28,17 +29,18 @@ function App() {
   const [selectedGenre, setSelectedGenre] = useState('')
   const [selectedGame, setSelectedGame] = useState(null)
   const [popupOpen, setPopupOpen] = useState(false)
+  const [ordering, setOrdering] = useState('-rating')
 
-  // Fetch games from RAWG API on initial load and whenever the search query changes
+  // Fetch games from RAWG API on initial load and whenever the search query or selected genre changes
   useEffect(() => {
     const fetchGames = async () => {
       setLoading(true)
-      const gameData = await getGames(searchQuery, selectedGenre)
+      const gameData = await getGames(searchQuery, selectedGenre, ordering)
       setGames(gameData)
       setLoading(false)
     }
     fetchGames()
-  }, [searchQuery, selectedGenre])
+  }, [searchQuery, selectedGenre, ordering])
 
   // Fetch genres from RAWG API on initial load
   useEffect(() => {
@@ -65,7 +67,12 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Navbar />
-      <SearchBar searchInput={searchInput} onSearch={handleSearch} onSearchChange={setSearchInput} />
+      <SearchBar
+        searchInput={searchInput}
+        onSearch={handleSearch} 
+        onSearchChange={setSearchInput} 
+        ordering={ordering} 
+        onOrderingChange={setOrdering} />
       {/* Genre filter chips, clicking on a chip will filter the games by that genre, clicking again will remove the filter */}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, padding: 2 }}>
         {genres.map(genre => (
@@ -77,9 +84,13 @@ function App() {
             clickable />
         ))}
       </Box>
-      {/* Loading spinner while data is being fetched, once it is fetched, displays the game cards */}
+      {/* Loading spinner while data is being fetched, once it is fetched, displays the game cards. If no games are found by searching, displays a 'No games found' message */}
       {loading ? (
         <LoadingCircle />
+      ) : games.length === 0 ? (
+        <Box sx={{ textAlign: 'center', padding: 4 }}>
+          <Typography variant="h6">No games found for "{searchQuery}"</Typography>
+        </Box>
       ) : (
         <Grid container spacing={2} sx={{ padding: 2 }}>
           {games.map(game => (
